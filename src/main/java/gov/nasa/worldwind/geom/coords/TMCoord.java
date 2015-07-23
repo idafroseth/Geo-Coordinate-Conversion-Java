@@ -15,199 +15,196 @@ import gov.nasa.worldwind.geom.Angle;
  * @version $Id$
  * @see TMCoordConverter
  */
-public class TMCoord
-{
-    private final Angle latitude;
-    private final Angle longitude;
-    private final Angle originLatitude;
-    private final Angle centralMeridian;
-    private final double falseEasting;
-    private final double falseNorthing;
-    private final double scale;
-    private final double easting;
-    private final double northing;
+public class TMCoord {
 
-    /**
-     * Create a set of Transverse Mercator coordinates from a pair of latitude and longitude,
-     * for the given <code>Globe</code> and projection parameters.
-     *
-     * @param latitude the latitude <code>Angle</code>.
-     * @param longitude the longitude <code>Angle</code>.
-     * @param globe the <code>Globe</code> - can be null (will use WGS84).
-     * @param a semi-major ellipsoid radius. If this and argument f are non-null and globe is null, will use the specfied a and f.
-     * @param f ellipsoid flattening. If this and argument a are non-null and globe is null, will use the specfied a and f.
-     * @param originLatitude the origin latitude <code>Angle</code>.
-     * @param centralMeridian the central meridian longitude <code>Angle</code>.
-     * @param falseEasting easting value at the center of the projection in meters.
-     * @param falseNorthing northing value at the center of the projection in meters.
-     * @param scale scaling factor.
-     * @return the corresponding <code>TMCoord</code>.
-     * @throws IllegalArgumentException if <code>latitude</code> or <code>longitude</code> is null,
-     * or the conversion to TM coordinates fails. If the globe is null conversion will default
-     * to using WGS84.
-     */
-    public static TMCoord fromLatLon(Angle latitude, Angle longitude, Double a, Double f,
-                   Angle originLatitude, Angle centralMeridian,
-                   double falseEasting, double falseNorthing,
-                   double scale)
-    {
-        if (latitude == null || longitude == null)
-        {
-            throw new IllegalArgumentException("Latitude Or Longitude Is Null");
-        }
-        if (originLatitude == null || centralMeridian == null)
-        {
-            throw new IllegalArgumentException("Angle Is Null");
-        }
+	private final Angle latitude;
+	private final Angle longitude;
+	private final Angle originLatitude;
+	private final Angle centralMeridian;
+	private final double falseEasting;
+	private final double falseNorthing;
+	private final double scale;
+	private final double easting;
+	private final double northing;
 
-        final TMCoordConverter converter = new TMCoordConverter();
-        if (a == null || f == null)
-        {
-            a = converter.getA();
-            f = converter.getF();
-        }
-        long err = converter.setTransverseMercatorParameters(a, f, originLatitude.radians, centralMeridian.radians,
-                falseEasting, falseNorthing, scale);
-        if (err == TMCoordConverter.TRANMERC_NO_ERROR)
-            err = converter.convertGeodeticToTransverseMercator(latitude.radians, longitude.radians);
+	/**
+	 * Create a set of Transverse Mercator coordinates from a pair of
+	 * latitude and longitude, for the given <code>Globe</code> and
+	 * projection parameters.
+	 *
+	 * @param latitude the latitude <code>Angle</code>.
+	 * @param longitude the longitude <code>Angle</code>.
+	 * @param globe the <code>Globe</code> - can be null (will use WGS84).
+	 * @param a semi-major ellipsoid radius. If this and argument f are
+	 * non-null and globe is null, will use the specfied a and f.
+	 * @param f ellipsoid flattening. If this and argument a are non-null
+	 * and globe is null, will use the specfied a and f.
+	 * @param originLatitude the origin latitude <code>Angle</code>.
+	 * @param centralMeridian the central meridian longitude
+	 * <code>Angle</code>.
+	 * @param falseEasting easting value at the center of the projection in
+	 * meters.
+	 * @param falseNorthing northing value at the center of the projection
+	 * in meters.
+	 * @param scale scaling factor.
+	 * @return the corresponding <code>TMCoord</code>.
+	 * @throws IllegalArgumentException if <code>latitude</code> or
+	 * <code>longitude</code> is null, or the conversion to TM coordinates
+	 * fails. If the globe is null conversion will default to using WGS84.
+	 */
+	public static TMCoord fromLatLon(Angle latitude, Angle longitude, Double a, Double f,
+		Angle originLatitude, Angle centralMeridian,
+		double falseEasting, double falseNorthing,
+		double scale) {
+		if (latitude == null || longitude == null) {
+			throw new IllegalArgumentException("Latitude Or Longitude Is Null");
+		}
+		if (originLatitude == null || centralMeridian == null) {
+			throw new IllegalArgumentException("Angle Is Null");
+		}
 
-        if (err != TMCoordConverter.TRANMERC_NO_ERROR && err != TMCoordConverter.TRANMERC_LON_WARNING)
-        {
-            throw new IllegalArgumentException("TM Conversion Error");
-        }
+		final TMCoordConverter converter = new TMCoordConverter();
+		if (a == null || f == null) {
+			a = converter.getA();
+			f = converter.getF();
+		}
+		long err = converter.setTransverseMercatorParameters(a, f, originLatitude.radians, centralMeridian.radians,
+			falseEasting, falseNorthing, scale);
+		if (err == TMCoordConverter.TRANMERC_NO_ERROR) {
+			err = converter.convertGeodeticToTransverseMercator(latitude.radians, longitude.radians);
+		}
 
-        return new TMCoord(latitude, longitude, converter.getEasting(), converter.getNorthing(),
-                originLatitude, centralMeridian, falseEasting, falseNorthing, scale);
-    }
+		if (err != TMCoordConverter.TRANMERC_NO_ERROR && err != TMCoordConverter.TRANMERC_LON_WARNING) {
+			throw new IllegalArgumentException("TM Conversion Error");
+		}
 
-    /**
-     * Create a set of Transverse Mercator coordinates for the given <code>Globe</code>,
-     * easting, northing and projection parameters.
-     *
-     * @param easting the easting distance value in meters.
-     * @param northing the northing distance value in meters.
-     * @param globe the <code>Globe</code> - can be null (will use WGS84).
-     * @param originLatitude the origin latitude <code>Angle</code>.
-     * @param centralMeridian the central meridian longitude <code>Angle</code>.
-     * @param falseEasting easting value at the center of the projection in meters.
-     * @param falseNorthing northing value at the center of the projection in meters.
-     * @param scale scaling factor.
-     * @return the corresponding <code>TMCoord</code>.
-     * @throws IllegalArgumentException if <code>originLatitude</code> or <code>centralMeridian</code>
-     * is null, or the conversion to geodetic coordinates fails. If the globe is null conversion will default
-     * to using WGS84.
-     */
-    public static TMCoord fromTM(double easting, double northing,
-                   Angle originLatitude, Angle centralMeridian,
-                   double falseEasting, double falseNorthing,
-                   double scale)
-    {
-        if (originLatitude == null || centralMeridian == null)
-        {
-            throw new IllegalArgumentException("Angle Is Null");
-        }
+		return new TMCoord(latitude, longitude, converter.getEasting(), converter.getNorthing(),
+			originLatitude, centralMeridian, falseEasting, falseNorthing, scale);
+	}
 
-        final TMCoordConverter converter = new TMCoordConverter();
+	/**
+	 * Create a set of Transverse Mercator coordinates for the given
+	 * <code>Globe</code>, easting, northing and projection parameters.
+	 *
+	 * @param easting the easting distance value in meters.
+	 * @param northing the northing distance value in meters.
+	 * @param globe the <code>Globe</code> - can be null (will use WGS84).
+	 * @param originLatitude the origin latitude <code>Angle</code>.
+	 * @param centralMeridian the central meridian longitude
+	 * <code>Angle</code>.
+	 * @param falseEasting easting value at the center of the projection in
+	 * meters.
+	 * @param falseNorthing northing value at the center of the projection
+	 * in meters.
+	 * @param scale scaling factor.
+	 * @return the corresponding <code>TMCoord</code>.
+	 * @throws IllegalArgumentException if <code>originLatitude</code> or
+	 * <code>centralMeridian</code> is null, or the conversion to geodetic
+	 * coordinates fails. If the globe is null conversion will default to
+	 * using WGS84.
+	 */
+	public static TMCoord fromTM(double easting, double northing,
+		Angle originLatitude, Angle centralMeridian,
+		double falseEasting, double falseNorthing,
+		double scale) {
+		if (originLatitude == null || centralMeridian == null) {
+			throw new IllegalArgumentException("Angle Is Null");
+		}
 
-        double a = converter.getA();
-        double f = converter.getF();
-        long err = converter.setTransverseMercatorParameters(a, f, originLatitude.radians, centralMeridian.radians,
-                falseEasting, falseNorthing, scale);
-        if (err == TMCoordConverter.TRANMERC_NO_ERROR)
-            err = converter.convertTransverseMercatorToGeodetic(easting, northing);
+		final TMCoordConverter converter = new TMCoordConverter();
 
-        if (err != TMCoordConverter.TRANMERC_NO_ERROR && err != TMCoordConverter.TRANMERC_LON_WARNING)
-        {
-            throw new IllegalArgumentException("TM Conversion Error");
-        }
+		double a = converter.getA();
+		double f = converter.getF();
+		long err = converter.setTransverseMercatorParameters(a, f, originLatitude.radians, centralMeridian.radians,
+			falseEasting, falseNorthing, scale);
+		if (err == TMCoordConverter.TRANMERC_NO_ERROR) {
+			err = converter.convertTransverseMercatorToGeodetic(easting, northing);
+		}
 
-        return new TMCoord(Angle.fromRadians(converter.getLatitude()), Angle.fromRadians(converter.getLongitude()),
-                easting, northing, originLatitude, centralMeridian, falseEasting, falseNorthing, scale);
-    }
+		if (err != TMCoordConverter.TRANMERC_NO_ERROR && err != TMCoordConverter.TRANMERC_LON_WARNING) {
+			throw new IllegalArgumentException("TM Conversion Error");
+		}
 
-    /**
-     * Create an arbitrary set of Transverse Mercator coordinates with the given values.
-     *
-     * @param latitude the latitude <code>Angle</code>.
-     * @param longitude the longitude <code>Angle</code>.
-     * @param easting the easting distance value in meters.
-     * @param northing the northing distance value in meters.
-     * @param originLatitude the origin latitude <code>Angle</code>.
-     * @param centralMeridian the central meridian longitude <code>Angle</code>.
-     * @param falseEasting easting value at the center of the projection in meters.
-     * @param falseNorthing northing value at the center of the projection in meters.
-     * @param scale scaling factor.
-     * @throws IllegalArgumentException if <code>latitude</code>, <code>longitude</code>, <code>originLatitude</code>
-     * or <code>centralMeridian</code> is null.
-     */
-    public TMCoord(Angle latitude, Angle longitude, double easting, double northing,
-                   Angle originLatitude, Angle centralMeridian,
-                   double falseEasting, double falseNorthing,
-                   double scale)
-    {
-        if (latitude == null || longitude == null)
-        {
-            throw new IllegalArgumentException("Latitude Or Longitude Is Null");
-        }
-        if (originLatitude == null || centralMeridian == null)
-        {
-            throw new IllegalArgumentException("Angle Is Null");
-        }
+		return new TMCoord(Angle.fromRadians(converter.getLatitude()), Angle.fromRadians(converter.getLongitude()),
+			easting, northing, originLatitude, centralMeridian, falseEasting, falseNorthing, scale);
+	}
 
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.easting = easting;
-        this.northing = northing;
-        this.originLatitude = originLatitude;
-        this.centralMeridian = centralMeridian;
-        this.falseEasting = falseEasting;
-        this.falseNorthing = falseNorthing;
-        this.scale = scale;
-    }
+	/**
+	 * Create an arbitrary set of Transverse Mercator coordinates with the
+	 * given values.
+	 *
+	 * @param latitude the latitude <code>Angle</code>.
+	 * @param longitude the longitude <code>Angle</code>.
+	 * @param easting the easting distance value in meters.
+	 * @param northing the northing distance value in meters.
+	 * @param originLatitude the origin latitude <code>Angle</code>.
+	 * @param centralMeridian the central meridian longitude
+	 * <code>Angle</code>.
+	 * @param falseEasting easting value at the center of the projection in
+	 * meters.
+	 * @param falseNorthing northing value at the center of the projection
+	 * in meters.
+	 * @param scale scaling factor.
+	 * @throws IllegalArgumentException if <code>latitude</code>,
+	 * <code>longitude</code>, <code>originLatitude</code> or
+	 * <code>centralMeridian</code> is null.
+	 */
+	public TMCoord(Angle latitude, Angle longitude, double easting, double northing,
+		Angle originLatitude, Angle centralMeridian,
+		double falseEasting, double falseNorthing,
+		double scale) {
+		if (latitude == null || longitude == null) {
+			throw new IllegalArgumentException("Latitude Or Longitude Is Null");
+		}
+		if (originLatitude == null || centralMeridian == null) {
+			throw new IllegalArgumentException("Angle Is Null");
+		}
 
-    public Angle getLatitude()
-    {
-        return this.latitude;
-    }
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.easting = easting;
+		this.northing = northing;
+		this.originLatitude = originLatitude;
+		this.centralMeridian = centralMeridian;
+		this.falseEasting = falseEasting;
+		this.falseNorthing = falseNorthing;
+		this.scale = scale;
+	}
 
-    public Angle getLongitude()
-    {
-        return this.longitude;
-    }
+	public Angle getLatitude() {
+		return this.latitude;
+	}
 
-    public Angle getOriginLatitude()
-    {
-        return this.originLatitude;
-    }
+	public Angle getLongitude() {
+		return this.longitude;
+	}
 
-    public Angle getCentralMeridian()
-    {
-        return this.centralMeridian;
-    }
+	public Angle getOriginLatitude() {
+		return this.originLatitude;
+	}
 
-    public double getFalseEasting()
-    {
-        return this.falseEasting;
-    }
+	public Angle getCentralMeridian() {
+		return this.centralMeridian;
+	}
 
-    public double getFalseNorthing()
-    {
-        return this.falseNorthing;
-    }
+	public double getFalseEasting() {
+		return this.falseEasting;
+	}
 
-    public double getScale()
-    {
-        return this.scale;
-    }
+	public double getFalseNorthing() {
+		return this.falseNorthing;
+	}
 
-    public double getEasting()
-    {
-        return this.easting;
-    }
+	public double getScale() {
+		return this.scale;
+	}
 
-    public double getNorthing()
-    {
-        return this.northing;
-    }
+	public double getEasting() {
+		return this.easting;
+	}
+
+	public double getNorthing() {
+		return this.northing;
+	}
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 United States Government as represented by the Administrator of the
+ * Copyright (C) 2012 United States Government as represented by the Administrator of the
  * National Aeronautics and Space Administration.
  * All Rights Reserved.
  */
@@ -9,204 +9,233 @@ import java.util.*;
 
 /**
  * @author Tom Gaskins
- * @version $Id$
+ * @version $Id: Intersection.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public final class Intersection // Instances are immutable
 {
-    protected Vec4 intersectionPoint;
-    protected Position intersectionPosition;
-    protected boolean isTangent;
-    protected Object object;
 
-    /**
-     * Constructs an Intersection from an intersection point and tangency indicator.
-     *
-     * @param intersectionPoint the intersection point.
-     * @param isTangent         true if the intersection is tangent to the object intersected, otherwise false.
-     *
-     * @throws IllegalArgumentException if <code>intersectionPoint</code> is null
-     */
-    public Intersection(Vec4 intersectionPoint, boolean isTangent)
-    {
-        if (intersectionPoint == null)
-        {
-            throw new IllegalArgumentException("Intersection Point Is Null");
-        }
-        this.intersectionPoint = intersectionPoint;
-        this.isTangent = isTangent;
-    }
+	protected Vec4 intersectionPoint;
+	protected Double intersectionLength;
+	protected Position intersectionPosition;
+	protected boolean isTangent;
+	protected Object object;
 
-    public Intersection(Vec4 intersectionPoint, Position intersectionPosition, boolean isTangent, Object object)
-    {
-        if (intersectionPoint == null)
-        {
-        		throw new IllegalArgumentException("Intersection Point Is Null");
-        }
+	/**
+	 * Constructs an Intersection from an intersection point and tangency
+	 * indicator.
+	 *
+	 * @param intersectionPoint the intersection point.
+	 * @param isTangent true if the intersection is tangent to the object
+	 * intersected, otherwise false.
+	 *
+	 * @throws IllegalArgumentException if <code>intersectionPoint</code> is
+	 * null
+	 */
+	public Intersection(Vec4 intersectionPoint, boolean isTangent) {
+		if (intersectionPoint == null) {
+			throw new IllegalArgumentException("Intersection Point Is Null");
+		}
+		this.intersectionPoint = intersectionPoint;
+		this.isTangent = isTangent;
+	}
 
-        this.intersectionPoint = intersectionPoint;
-        this.intersectionPosition = intersectionPosition;
-        this.isTangent = isTangent;
-        this.object = object;
-    }
+	/**
+	 * Constructs an Intersection from an intersection point and tangency
+	 * indicator.
+	 *
+	 * @param intersectionPoint the intersection point
+	 * @param intersectionLength the parametric length along the
+	 * intersection geometry. If the geometry was a line, then this value
+	 * will be the parametric value of the intersection point along the
+	 * line.
+	 * @param isTangent true if the intersection is tangent to the object
+	 * intersected, otherwise false.
+	 *
+	 * @throws IllegalArgumentException if <code>intersectionPoint</code> is
+	 * null
+	 */
+	public Intersection(Vec4 intersectionPoint, double intersectionLength, boolean isTangent) {
+		this(intersectionPoint, isTangent);
 
-    /**
-     * Returns the intersection position if one has been set.
-     *
-     * @return the intersection position, or null if the position has not been set.
-     */
-    public Position getIntersectionPosition()
-    {
-        return intersectionPosition;
-    }
+		this.intersectionLength = intersectionLength;
+	}
 
-    /**
-     * Specifies the intersection position, which should be a position computed from the intersection point.
-     *
-     * @param intersectionPosition the intersection position. May be null.
-     */
-    public void setIntersectionPosition(Position intersectionPosition)
-    {
-        this.intersectionPosition = intersectionPosition;
-    }
+	public Intersection(Vec4 intersectionPoint, Position intersectionPosition, boolean isTangent, Object object) {
+		if (intersectionPoint == null) {
+			throw new IllegalArgumentException("Intersection Point Is Null");
+		}
 
-    /**
-     * Returns the object associated with the intersection.
-     *
-     * @return the object associated with the intersection, or null if no object is associated.
-     */
-    public Object getObject()
-    {
-        return object;
-    }
+		this.intersectionPoint = intersectionPoint;
+		this.intersectionPosition = intersectionPosition;
+		this.isTangent = isTangent;
+		this.object = object;
+	}
 
-    /**
-     * Specifies the object to associate with the intersection.
-     *
-     * @param object the object to associate with the intersection. May be null.
-     */
-    public void setObject(Object object)
-    {
-        this.object = object;
-    }
+	/**
+	 * Returns the intersection position if one has been set.
+	 *
+	 * @return the intersection position, or null if the position has not
+	 * been set.
+	 */
+	public Position getIntersectionPosition() {
+		return intersectionPosition;
+	}
 
-    /**
-     * Returns the intersection point.
-     *
-     * @return the intersection point.
-     */
-    public Vec4 getIntersectionPoint()
-    {
-        return intersectionPoint;
-    }
+	/**
+	 * Specifies the intersection position, which should be a position
+	 * computed from the intersection point.
+	 *
+	 * @param intersectionPosition the intersection position. May be null.
+	 */
+	public void setIntersectionPosition(Position intersectionPosition) {
+		this.intersectionPosition = intersectionPosition;
+	}
 
-    /**
-     * Specifies the intersection point.
-     *
-     * @param intersectionPoint the intersection point. May be null, but typically should not be.
-     */
-    public void setIntersectionPoint(Vec4 intersectionPoint)
-    {
-        this.intersectionPoint = intersectionPoint;
-    }
+	/**
+	 * Returns the object associated with the intersection.
+	 *
+	 * @return the object associated with the intersection, or null if no
+	 * object is associated.
+	 */
+	public Object getObject() {
+		return object;
+	}
 
-    /**
-     * Indicates whether the intersection is tangent to the object intersected.
-     *
-     * @return true if the intersection is tangent, otherwise false.
-     */
-    public boolean isTangent()
-    {
-        return isTangent;
-    }
+	/**
+	 * Specifies the object to associate with the intersection.
+	 *
+	 * @param object the object to associate with the intersection. May be
+	 * null.
+	 */
+	public void setObject(Object object) {
+		this.object = object;
+	}
 
-    /**
-     * Specifies whether the intersection is tangent to the object intersected.
-     *
-     * @param tangent true if the intersection is tangent, otherwise false.
-     */
-    public void setTangent(boolean tangent)
-    {
-        isTangent = tangent;
-    }
+	/**
+	 * Returns the intersection point.
+	 *
+	 * @return the intersection point.
+	 */
+	public Vec4 getIntersectionPoint() {
+		return intersectionPoint;
+	}
 
-    /**
-     * Merges two lists of intersections into a single list sorted by intersection distance from a specified reference
-     * point.
-     *
-     * @param refPoint the reference point.
-     * @param listA    the first list of intersections.
-     * @param listB    the second list of intersections.
-     *
-     * @return the merged list of intersections, sorted by increasing distance from the reference point.
-     */
-    public static Queue<Intersection> sort(final Vec4 refPoint, List<Intersection> listA, List<Intersection> listB)
-    {
-        PriorityQueue<Intersection> sorted = new PriorityQueue<Intersection>(10, new Comparator<Intersection>()
-        {
-            public int compare(Intersection losiA, Intersection losiB)
-            {
-                if (losiA.intersectionPoint == null || losiB.intersectionPoint == null)
-                    return 0;
+	/**
+	 * Specifies the intersection point.
+	 *
+	 * @param intersectionPoint the intersection point. May be null, but
+	 * typically should not be.
+	 */
+	public void setIntersectionPoint(Vec4 intersectionPoint) {
+		this.intersectionPoint = intersectionPoint;
+	}
 
-                double dA = refPoint.distanceTo3(losiA.intersectionPoint);
-                double dB = refPoint.distanceTo3(losiB.intersectionPoint);
+	/**
+	 * Indicates whether the intersection is tangent to the object
+	 * intersected.
+	 *
+	 * @return true if the intersection is tangent, otherwise false.
+	 */
+	public boolean isTangent() {
+		return isTangent;
+	}
 
-                return dA < dB ? -1 : dA == dB ? 0 : 1;
-            }
-        });
+	/**
+	 * Specifies whether the intersection is tangent to the object
+	 * intersected.
+	 *
+	 * @param tangent true if the intersection is tangent, otherwise false.
+	 */
+	public void setTangent(boolean tangent) {
+		isTangent = tangent;
+	}
 
-        if (listA != null)
-        {
-            for (Intersection intersection : listA)
-            {
-                sorted.add(intersection);
-            }
-        }
+	/**
+	 * The parametric length along the intersection geometry. If the
+	 * geometry involved a line, this value is the parametric distance at
+	 * which the intersection occurred along the line.
+	 *
+	 * @return the intersection length, or null if the length was not
+	 * calculated.
+	 */
+	public Double getIntersectionLength() {
+		return intersectionLength;
+	}
 
-        if (listB != null)
-        {
-            for (Intersection intersection : listB)
-            {
-                sorted.add(intersection);
-            }
-        }
+	/**
+	 * Merges two lists of intersections into a single list sorted by
+	 * intersection distance from a specified reference point.
+	 *
+	 * @param refPoint the reference point.
+	 * @param listA the first list of intersections.
+	 * @param listB the second list of intersections.
+	 *
+	 * @return the merged list of intersections, sorted by increasing
+	 * distance from the reference point.
+	 */
+	public static Queue<Intersection> sort(final Vec4 refPoint, List<Intersection> listA, List<Intersection> listB) {
+		PriorityQueue<Intersection> sorted = new PriorityQueue<Intersection>(10, new Comparator<Intersection>() {
+			public int compare(Intersection losiA, Intersection losiB) {
+				if (losiA.intersectionPoint == null || losiB.intersectionPoint == null) {
+					return 0;
+				}
 
-        return sorted;
-    }
+				double dA = refPoint.distanceTo3(losiA.intersectionPoint);
+				double dB = refPoint.distanceTo3(losiB.intersectionPoint);
 
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+				return dA < dB ? -1 : dA == dB ? 0 : 1;
+			}
+		});
 
-        final gov.nasa.worldwind.geom.Intersection that = (gov.nasa.worldwind.geom.Intersection) o;
+		if (listA != null) {
+			for (Intersection intersection : listA) {
+				sorted.add(intersection);
+			}
+		}
 
-        if (isTangent != that.isTangent)
-            return false;
-        //noinspection RedundantIfStatement
-        if (!intersectionPoint.equals(that.intersectionPoint))
-            return false;
+		if (listB != null) {
+			for (Intersection intersection : listB) {
+				sorted.add(intersection);
+			}
+		}
 
-        return true;
-    }
+		return sorted;
+	}
 
-    @Override
-    public int hashCode()
-    {
-        int result;
-        result = intersectionPoint.hashCode();
-        result = 29 * result + (isTangent ? 1 : 0);
-        return result;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
 
-    @Override
-    public String toString()
-    {
-        String pt = "Intersection Point: " + this.intersectionPoint;
-        String tang = this.isTangent ? " is a tangent." : " not a tangent";
-        return pt + tang;
-    }
+		final gov.nasa.worldwind.geom.Intersection that = (gov.nasa.worldwind.geom.Intersection) o;
+
+		if (isTangent != that.isTangent) {
+			return false;
+		}
+		//noinspection RedundantIfStatement
+		if (!intersectionPoint.equals(that.intersectionPoint)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result;
+		result = intersectionPoint.hashCode();
+		result = 29 * result + (isTangent ? 1 : 0);
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		String pt = "Intersection Point: " + this.intersectionPoint;
+		String tang = this.isTangent ? " is a tangent." : " not a tangent";
+		return pt + tang;
+	}
 }
