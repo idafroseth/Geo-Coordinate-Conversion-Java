@@ -5,10 +5,6 @@
  */
 package gov.nasa.worldwind.geom;
 
-import com.sun.j3d.internal.BufferWrapper;
-import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.util.*;
-
 /**
  * @author dcollins
  * @version $Id: Matrix.java 2201 2014-08-07 23:17:54Z dcollins $
